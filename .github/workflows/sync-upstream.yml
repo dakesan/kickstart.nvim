@@ -22,7 +22,7 @@ jobs:
           git remote add upstream https://github.com/nvim-lua/kickstart.nvim.git
           git fetch upstream
           git checkout master
-          git merge upstream/main --no-commit
+          git merge upstream/master --no-commit
 
       - name: Check for conflicts
         id: check_conflicts
@@ -37,7 +37,7 @@ jobs:
         if: steps.check_conflicts.outputs.has_conflicts == 'false'
         run: |
           git commit -m "Merge upstream changes"
-          git push origin main
+          git push origin master
 
       - name: Create Pull Request if conflicts
         if: steps.check_conflicts.outputs.has_conflicts == 'true'
@@ -46,7 +46,7 @@ jobs:
           branch: upstream-sync
           title: 'Resolve conflicts with upstream'
           body: 'This PR was created to resolve conflicts with the upstream repository. Please resolve the conflicts manually.'
-          base: main
+          base: master
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
