@@ -1,0 +1,51 @@
+name: Sync and Create PR if Updated
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # 毎週月曜日の午前0時に実行
+  workflow_dispatch:  # 手動実行用
+
+jobs:
+  sync-and-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Sync upstream
+        run: |
+          git remote add upstream https://github.com/nvim-lua/kickstart.nvim.git
+          git fetch upstream
+          git checkout -B sync-upstream upstream/main
+          
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git checkout main
+          DIFF=$(git diff --name-only main sync-upstream)
+          if [ -n "$DIFF" ]; then
+            echo "::set-output name=has_changes::true"
+          else
+            echo "::set-output name=has_changes::false"
+          fi
+
+      - name: Push changes and create PR
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git push -f origin sync-upstream
+          
+      - name: Create Pull Request
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v3
+        with:
+          branch: sync-upstream
+          title: 'Sync with upstream kickstart.nvim'
+          body: 'This PR syncs our fork with the upstream kickstart.nvim repository.'
+          base: main
