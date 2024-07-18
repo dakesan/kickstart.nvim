@@ -192,45 +192,17 @@ return {{
 --     },
 --   },
 -- },
-{
+{ -- requires plugins in lua/plugins/treesitter.lua and lua/plugins/lsp.lua
+    -- for complete functionality (language features)
     'quarto-dev/quarto-nvim',
+    ft = { 'quarto' },
     dev = false,
-    dependencies = {{'hrsh7th/nvim-cmp'}, {
-        'jmbuhr/otter.nvim',
-        dev = false,
-        config = function()
-            require'otter'.setup {
-                lsp = {
-                    hover = {
-                        border = require'misc.style'.border
-                    }
-                }
-            }
-        end
-    }},
-    config = function()
-        require'quarto'.setup {
-            closePreviewOnExit = true,
-            lspFeatures = {
-                enabled = true,
-                chunks = 'curly',
-                languages = {'r', 'python', 'julia', 'bash', 'lua', 'html'},
-                diagnostics = {
-                    enabled = true,
-                    triggers = {"BufWritePost"}
-                },
-                completion = {
-                    enabled = true
-                }
-            },
-            keymap = {
-                hover = 'K',
-                definition = 'gd',
-                rename = '<leader>lR',
-                references = 'gr'
-            }
-        }
-    end
+    opts = {},
+    dependencies = {
+    -- for language features in code cells
+    -- configured in lua/plugins/lsp.lua and
+    -- added as a nvim-cmp source in lua/plugins/completion.lua
+    'jmbuhr/otter.nvim',
 }, {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v2.x',
