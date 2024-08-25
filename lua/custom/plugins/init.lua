@@ -370,4 +370,3 @@ return {
         require("hlchunk").setup({})
     end
 }}
-}
