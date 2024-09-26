@@ -369,4 +369,4 @@ return {
     config = function()
         require("hlchunk").setup({})
     end
-}}
+}
